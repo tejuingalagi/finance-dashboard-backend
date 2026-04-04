@@ -4,6 +4,9 @@ import com.teju.finance.entity.FinancialRecord;
 import com.teju.finance.repository.FinancialRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 
 import java.util.List;
 
@@ -19,6 +22,24 @@ public class FinancialRecordService {
 
     public List<FinancialRecord> getAllRecords() {
         return repository.findAll();
+    }
+    
+    public List<FinancialRecord> getRecords(String type, String category, int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        // Filter by type
+        if (type != null) {
+            return repository.findByType(type);
+        }
+
+        // Filter by category
+        if (category != null) {
+            return repository.findByCategory(category);
+        }
+
+        // Pagination (default)
+        return repository.findAll(pageable).getContent();
     }
 
     public List<FinancialRecord> getByType(String type) {
@@ -46,4 +67,5 @@ public class FinancialRecordService {
 
         return repository.save(record);
     }
+    
 }

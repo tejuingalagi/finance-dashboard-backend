@@ -31,17 +31,11 @@ public class FinancialRecordController {
     @GetMapping
     public List<FinancialRecord> getRecords(
             @RequestParam(required = false) String type,
-            @RequestParam(required = false) String category) {
+            @RequestParam(required = false) String category,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
 
-        if (type != null) {
-            return service.getByType(type);
-        }
-
-        if (category != null) {
-            return service.getByCategory(category);
-        }
-
-        return service.getAllRecords();
+        return service.getRecords(type, category, page, size);
     }
 
     @DeleteMapping("/{id}")
