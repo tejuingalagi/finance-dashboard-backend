@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/records")
@@ -61,5 +62,76 @@ public class FinancialRecordController {
         }
 
         return service.updateRecord(id, record);
+    }
+    
+   
+    @GetMapping("/summary/income")
+    public double totalIncome(@RequestHeader("role") String role) {
+
+        if ("VIEWER".equals(role)) {
+            throw new UnauthorizedException("Viewer cannot access summary");
+        }
+
+        return service.getTotalIncome();
+    }
+
+    @GetMapping("/summary/expense")
+    public double totalExpense(@RequestHeader("role") String role) {
+
+        if ("VIEWER".equals(role)) {
+            throw new UnauthorizedException("Viewer cannot access summary");
+        }
+
+        return service.getTotalExpense();
+    }
+
+    @GetMapping("/summary/balance")
+    public double netBalance(@RequestHeader("role") String role) {
+
+        if ("VIEWER".equals(role)) {
+            throw new UnauthorizedException("Viewer cannot access summary");
+        }
+
+        return service.getNetBalance();
+    }
+
+    @GetMapping("/summary/recent")
+    public List<FinancialRecord> recentRecords(@RequestHeader("role") String role) {
+
+        if ("VIEWER".equals(role)) {
+            throw new UnauthorizedException("Viewer cannot access summary");
+        }
+
+        return service.getRecentRecords();
+    }
+
+    @GetMapping("/summary/category")
+    public Map<String, Double> categoryTotals(@RequestHeader("role") String role) {
+
+        if ("VIEWER".equals(role)) {
+            throw new UnauthorizedException("Viewer cannot access summary");
+        }
+
+        return service.getCategoryTotals();
+    }
+
+    @GetMapping("/summary/monthly")
+    public Map<String, Double> monthlyTrends(@RequestHeader("role") String role) {
+
+        if ("VIEWER".equals(role)) {
+            throw new UnauthorizedException("Viewer cannot access summary");
+        }
+
+        return service.getMonthlyTrends();
+    }
+
+    @GetMapping("/summary/weekly")
+    public Map<Integer, Double> weeklyTrends(@RequestHeader("role") String role) {
+
+        if ("VIEWER".equals(role)) {
+            throw new UnauthorizedException("Viewer cannot access summary");
+        }
+
+        return service.getWeeklyTrends();
     }
 }
