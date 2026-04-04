@@ -1,11 +1,11 @@
-package com.finance.service;
+package com.teju.finance.service;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.finance.entity.User;
-import com.finance.repository.UserRepository;
+import com.teju.finance.entity.User;
+import com.teju.finance.repository.UserRepository;
 
 @Service
 public class UserService {

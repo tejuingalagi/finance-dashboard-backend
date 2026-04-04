@@ -1,12 +1,13 @@
-package com.finance.controller;
+package com.teju.finance.controller;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.finance.entity.User;
-import com.finance.service.UserService;
+import com.teju.finance.entity.User;
+import com.teju.finance.exception.UnauthorizedException;
+import com.teju.finance.service.UserService;
 
 import jakarta.validation.Valid;
 
@@ -18,7 +19,14 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public User createUser(@Valid @RequestBody User user) {
+    public User createUser(
+            @RequestHeader("role") String role,
+            @Valid @RequestBody User user) {
+
+        if (!role.equals("ADMIN")) {
+        	throw new UnauthorizedException("Access Denied: Only ADMIN can create users");
+        }
+
         return userService.createUser(user);
     }
 

@@ -1,4 +1,4 @@
-package com.finance;
+package com.teju.finance;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

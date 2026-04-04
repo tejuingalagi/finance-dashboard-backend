@@ -1,4 +1,4 @@
-package com.finance.entity;
+package com.teju.finance.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
