@@ -84,7 +84,8 @@ Each record includes:
 
   * Type
   * Category
-* Supports combined filtering (type + category)
+  * Date
+* Supports combined filtering (type + category + date)
 * Pagination implemented using:
 
   * page
@@ -142,24 +143,41 @@ Examples:
 
 ### Create Record
 
-```
-POST /records
-Header: role = ADMIN
-```
+POST /records  
+Header: role = ADMIN  
+
+---
 
 ### Get Records
 
-```
-GET /records?type=INCOME&category=SALARY&page=0&size=5
-Header: role = ANALYST
-```
+GET /records?type=INCOME&category=SALARY&date=2026-04-01&page=0&size=5  
+Header: role = ANALYST  
+
+Supports optional query params: type, category, date, page, size  
+
+---
+
+### Update Record
+
+PUT /records/{id}  
+Header: role = ADMIN  
+
+Body:
+
+{
+  "amount": 5000,
+  "type": "INCOME",
+  "category": "SALARY",
+  "date": "2026-04-05",
+  "description": "Updated record"
+}
+
+---
 
 ### Delete Record
 
-```
-DELETE /records/{id}
+DELETE /records/{id}  
 Header: role = ADMIN
-```
 
 ---
 
@@ -168,6 +186,7 @@ Header: role = ADMIN
 * Role is passed via request headers (mock authentication)
 * No authentication mechanism implemented to keep focus on backend logic
 * Case-insensitive role handling is supported
+* Date filtering expects format: YYYY-MM-DD
 
 ---
 
