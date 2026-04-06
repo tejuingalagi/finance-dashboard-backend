@@ -1,6 +1,7 @@
 package com.teju.finance.service;
 
 import com.teju.finance.entity.FinancialRecord;
+import com.teju.finance.exception.ResourceNotFoundException;
 import com.teju.finance.repository.FinancialRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,20 +28,37 @@ public class FinancialRecordService {
     
     public List<FinancialRecord> getRecords(String type, String category, int page, int size) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        List<FinancialRecord> records = repository.findAll();
 
-        // Filter by type
-        if (type != null) {
-            return repository.findByType(type);
+        List<FinancialRecord> filtered;
+
+        // Apply filtering
+        if (type != null && category != null) {
+            filtered = records.stream()
+                    .filter(r -> r.getType().equalsIgnoreCase(type)
+                            && r.getCategory().equalsIgnoreCase(category))
+                    .toList();
+        } else if (type != null) {
+            filtered = records.stream()
+                    .filter(r -> r.getType().equalsIgnoreCase(type))
+                    .toList();
+        } else if (category != null) {
+            filtered = records.stream()
+                    .filter(r -> r.getCategory().equalsIgnoreCase(category))
+                    .toList();
+        } else {
+            filtered = records;
         }
 
-        // Filter by category
-        if (category != null) {
-            return repository.findByCategory(category);
+        // Apply pagination manually
+        int start = page * size;
+        int end = Math.min(start + size, filtered.size());
+
+        if (start >= filtered.size()) {
+            return List.of();
         }
 
-        // Pagination (default)
-        return repository.findAll(pageable).getContent();
+        return filtered.subList(start, end);
     }
 
     public List<FinancialRecord> getByType(String type) {
@@ -52,13 +70,17 @@ public class FinancialRecordService {
     }
 
     public void deleteRecord(Long id) {
-        repository.deleteById(id);
+
+        FinancialRecord record = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Record not found with id: " + id));
+
+        repository.delete(record);
     }
     
     public FinancialRecord updateRecord(Long id, FinancialRecord updatedRecord) {
 
         FinancialRecord record = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Record not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Record not found with id: " + id));
 
         record.setAmount(updatedRecord.getAmount());
         record.setType(updatedRecord.getType());

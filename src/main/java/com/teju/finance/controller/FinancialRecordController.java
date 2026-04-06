@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,8 +23,8 @@ public class FinancialRecordController {
             @RequestHeader("role") String role,
             @Valid @RequestBody FinancialRecord record) {
 
-        if (!role.equals("ADMIN")) {
-        	throw new UnauthorizedException("Only ADMIN can create records");
+        if (!"ADMIN".equalsIgnoreCase(role)) {
+            throw new UnauthorizedException("Only ADMIN can create records");
         }
 
         return service.createRecord(record);
@@ -31,44 +32,56 @@ public class FinancialRecordController {
 
     @GetMapping
     public List<FinancialRecord> getRecords(
+            @RequestHeader("role") String role,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String category,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
 
+        if ("VIEWER".equalsIgnoreCase(role)) {
+            throw new UnauthorizedException("Viewer cannot access records");
+        }
+
         return service.getRecords(type, category, page, size);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteRecord(
+    public Map<String, String> deleteRecord(
             @RequestHeader("role") String role,
             @PathVariable Long id) {
 
-        if (!role.equals("ADMIN")) {
-        	throw new UnauthorizedException("Only ADMIN can delete records");
+        if (!"ADMIN".equalsIgnoreCase(role)) {
+            throw new UnauthorizedException("Only ADMIN can delete records");
         }
 
         service.deleteRecord(id);
+
+        return Map.of("message", "Record deleted successfully");
     }
-    
+
     @PutMapping("/{id}")
-    public FinancialRecord updateRecord(
+    public Map<String, Object> updateRecord(
             @RequestHeader("role") String role,
             @PathVariable Long id,
             @Valid @RequestBody FinancialRecord record) {
 
-        if (!role.equals("ADMIN")) {
+        if (!"ADMIN".equalsIgnoreCase(role)) {
             throw new UnauthorizedException("Only ADMIN can update records");
         }
 
-        return service.updateRecord(id, record);
+        FinancialRecord updatedRecord = service.updateRecord(id, record);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Record updated successfully");
+        response.put("data", updatedRecord);
+
+        return response;
     }
-    
-   
+
     @GetMapping("/summary/income")
     public double totalIncome(@RequestHeader("role") String role) {
 
-        if ("VIEWER".equals(role)) {
+        if ("VIEWER".equalsIgnoreCase(role)) {
             throw new UnauthorizedException("Viewer cannot access summary");
         }
 
@@ -78,7 +91,7 @@ public class FinancialRecordController {
     @GetMapping("/summary/expense")
     public double totalExpense(@RequestHeader("role") String role) {
 
-        if ("VIEWER".equals(role)) {
+        if ("VIEWER".equalsIgnoreCase(role)) {
             throw new UnauthorizedException("Viewer cannot access summary");
         }
 
@@ -88,7 +101,7 @@ public class FinancialRecordController {
     @GetMapping("/summary/balance")
     public double netBalance(@RequestHeader("role") String role) {
 
-        if ("VIEWER".equals(role)) {
+        if ("VIEWER".equalsIgnoreCase(role)) {
             throw new UnauthorizedException("Viewer cannot access summary");
         }
 
@@ -98,7 +111,7 @@ public class FinancialRecordController {
     @GetMapping("/summary/recent")
     public List<FinancialRecord> recentRecords(@RequestHeader("role") String role) {
 
-        if ("VIEWER".equals(role)) {
+        if ("VIEWER".equalsIgnoreCase(role)) {
             throw new UnauthorizedException("Viewer cannot access summary");
         }
 
@@ -108,7 +121,7 @@ public class FinancialRecordController {
     @GetMapping("/summary/category")
     public Map<String, Double> categoryTotals(@RequestHeader("role") String role) {
 
-        if ("VIEWER".equals(role)) {
+        if ("VIEWER".equalsIgnoreCase(role)) {
             throw new UnauthorizedException("Viewer cannot access summary");
         }
 
@@ -118,7 +131,7 @@ public class FinancialRecordController {
     @GetMapping("/summary/monthly")
     public Map<String, Double> monthlyTrends(@RequestHeader("role") String role) {
 
-        if ("VIEWER".equals(role)) {
+        if ("VIEWER".equalsIgnoreCase(role)) {
             throw new UnauthorizedException("Viewer cannot access summary");
         }
 
@@ -128,7 +141,7 @@ public class FinancialRecordController {
     @GetMapping("/summary/weekly")
     public Map<Integer, Double> weeklyTrends(@RequestHeader("role") String role) {
 
-        if ("VIEWER".equals(role)) {
+        if ("VIEWER".equalsIgnoreCase(role)) {
             throw new UnauthorizedException("Viewer cannot access summary");
         }
 
