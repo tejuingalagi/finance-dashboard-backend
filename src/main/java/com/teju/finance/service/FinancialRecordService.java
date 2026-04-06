@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,31 +27,19 @@ public class FinancialRecordService {
         return repository.findAll();
     }
     
-    public List<FinancialRecord> getRecords(String type, String category, int page, int size) {
+    public List<FinancialRecord> getRecords(String type, String category, String date, int page, int size) {
 
         List<FinancialRecord> records = repository.findAll();
 
-        List<FinancialRecord> filtered;
+        System.out.println("Input date: " + date);
+        records.forEach(r -> System.out.println("DB date: " + r.getDate()));
 
-        // Apply filtering
-        if (type != null && category != null) {
-            filtered = records.stream()
-                    .filter(r -> r.getType().equalsIgnoreCase(type)
-                            && r.getCategory().equalsIgnoreCase(category))
-                    .toList();
-        } else if (type != null) {
-            filtered = records.stream()
-                    .filter(r -> r.getType().equalsIgnoreCase(type))
-                    .toList();
-        } else if (category != null) {
-            filtered = records.stream()
-                    .filter(r -> r.getCategory().equalsIgnoreCase(category))
-                    .toList();
-        } else {
-            filtered = records;
-        }
+        List<FinancialRecord> filtered = records.stream()
+                .filter(r -> (type == null || type.isBlank() || r.getType().equalsIgnoreCase(type)))
+                .filter(r -> (category == null || category.isBlank() || r.getCategory().equalsIgnoreCase(category)))
+                .filter(r -> (date == null || date.isBlank() || r.getDate().equals(LocalDate.parse(date))))
+                .toList();
 
-        // Apply pagination manually
         int start = page * size;
         int end = Math.min(start + size, filtered.size());
 

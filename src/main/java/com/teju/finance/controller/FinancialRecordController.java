@@ -33,6 +33,7 @@ public class FinancialRecordController {
     @GetMapping
     public List<FinancialRecord> getRecords(
             @RequestHeader("role") String role,
+            @RequestParam(name = "date", required = false) String date,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String category,
             @RequestParam(defaultValue = "0") int page,
@@ -42,7 +43,7 @@ public class FinancialRecordController {
             throw new UnauthorizedException("Viewer cannot access records");
         }
 
-        return service.getRecords(type, category, page, size);
+        return service.getRecords(type, category, date, page, size);
     }
 
     @DeleteMapping("/{id}")
