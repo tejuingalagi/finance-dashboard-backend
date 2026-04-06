@@ -1,10 +1,16 @@
-# Finance Dashboard Backend
+# Finance Data Processing and Access Control Backend
 
 ## Overview
 
-This project is a backend system for a finance dashboard application. It provides APIs to manage users, financial records, and summary analytics with role-based access control.
+This project is a backend system built as part of a backend development assessment. It simulates a finance dashboard where users interact with financial records based on their roles.
 
-The system is designed with a clean architecture, proper validation, and structured business logic.
+The focus of this project is on:
+
+* Clean API design
+* Proper data modeling
+* Role-based access control
+* Business logic implementation
+* Validation and error handling
 
 ---
 
@@ -18,12 +24,24 @@ The system is designed with a clean architecture, proper validation, and structu
 
 ---
 
-## Features
+## Architecture & Design
 
-### 1. User Management
+The application follows a layered architecture:
 
-* Create users (ADMIN only)
-* View all users
+* **Controller Layer** → Handles API requests and responses
+* **Service Layer** → Contains business logic
+* **Repository Layer** → Handles database operations
+* **Entity Layer** → Defines data models
+
+This separation ensures clarity, maintainability, and scalability.
+
+---
+
+## Core Requirements Implementation
+
+### 1. User & Role Management
+
+* Users can be created and managed
 * Each user has:
 
   * Name
@@ -31,18 +49,26 @@ The system is designed with a clean architecture, proper validation, and structu
   * Role (ADMIN, ANALYST, VIEWER)
   * Status (ACTIVE / INACTIVE)
 
+#### Role Behavior:
+
+| Role    | Access                                               |
+| ------- | ---------------------------------------------------- |
+| VIEWER  | Restricted from records and summary                  |
+| ANALYST | Can view records and summary                         |
+| ADMIN   | Full access (create, update, delete users & records) |
+
 ---
 
 ### 2. Financial Records Management
 
 Supports full CRUD operations:
 
-* Create record (ADMIN only)
+* Create records (ADMIN only)
 * View records (ADMIN, ANALYST)
-* Update record (ADMIN only)
-* Delete record (ADMIN only)
+* Update records (ADMIN only)
+* Delete records (ADMIN only)
 
-Each record contains:
+Each record includes:
 
 * Amount
 * Type (INCOME / EXPENSE)
@@ -54,12 +80,12 @@ Each record contains:
 
 ### 3. Filtering & Pagination
 
-* Filter by:
+* Filter records by:
 
   * Type
   * Category
 * Supports combined filtering (type + category)
-* Pagination:
+* Pagination implemented using:
 
   * page
   * size
@@ -67,6 +93,8 @@ Each record contains:
 ---
 
 ### 4. Dashboard Summary APIs
+
+Provides aggregated data for dashboard:
 
 * Total Income
 * Total Expense
@@ -78,25 +106,35 @@ Each record contains:
 
 ---
 
-### 5. Access Control
+### 5. Access Control Logic
 
-| Role    | Permissions                      |
-| ------- | -------------------------------- |
-| VIEWER  | Cannot access records or summary |
-| ANALYST | Can view records and summary     |
-| ADMIN   | Full access                      |
+Access control is implemented at the controller level using role checks from request headers.
+
+Examples:
+
+* VIEWER → Cannot access records or summary APIs
+* ANALYST → Can access records and summary
+* ADMIN → Full access to all APIs
 
 ---
 
 ### 6. Validation & Error Handling
 
-* Input validation using annotations
+* Input validation using annotations (`@Valid`, `@NotBlank`, etc.)
 * Proper HTTP status codes:
 
   * 400 → Validation errors
   * 403 → Unauthorized access
   * 404 → Resource not found
-* Structured error responses
+* Centralized exception handling using `@RestControllerAdvice`
+
+---
+
+### 7. Data Persistence
+
+* MySQL database used for persistence
+* Spring Data JPA for ORM
+* Hibernate auto schema update enabled
 
 ---
 
@@ -125,17 +163,11 @@ Header: role = ADMIN
 
 ---
 
-## Database
-
-* MySQL database
-* Auto schema update using Hibernate
-
----
-
 ## Assumptions
 
-* Role is passed through request headers (mock authentication)
-* No authentication system implemented (kept simple for assignment)
+* Role is passed via request headers (mock authentication)
+* No authentication mechanism implemented to keep focus on backend logic
+* Case-insensitive role handling is supported
 
 ---
 
@@ -144,10 +176,12 @@ Header: role = ADMIN
 1. Clone the repository
 2. Configure MySQL in `application.properties`
 3. Run the Spring Boot application
-4. Access APIs via Swagger or Postman
+4. Access APIs via Swagger UI or Postman
 
 ---
 
-## Notes
+## Author
 
-This project focuses on backend design, API structure, and business logic implementation. It is not intended to be production-ready but demonstrates clean and maintainable backend development practices.
+**Tejeshwini Ingalagi**
+
+
